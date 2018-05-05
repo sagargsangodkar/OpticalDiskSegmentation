@@ -87,14 +87,6 @@ path_gt = '/media/asr-gpu/hdd/sachin/ml_project/path_gt_list.txt'
 num_of_images = 54
 dataset = IDRIDDataset(path_train,path_gt,num_of_images)
 
-'''
-for i in range(len(dataset)):
-    sample = dataset[i]
-    print(i)
-'''
-
-
-
 train_loader = DataLoader(dataset, batch_size=6, shuffle=True, num_workers=2)
 
 class Net(torch.nn.Module):
@@ -158,7 +150,6 @@ while(1):
 	for epoch in range(1):
 	    for i, data in enumerate(train_loader, 0):
 		# get the inputs
-	#	print(i)
 		batchNo+=1
 		trainImage,GtImage = data        
 		trainImagePatches,GtImagePatches = extractPatch(np.array(trainImage),np.array(GtImage),patchSize)
@@ -181,14 +172,12 @@ while(1):
 			print(test.shape)
 			plt.imshow(np.uint8(test)/np.max(np.uint8(test)),cmap=plt.cm.gray)
 			plt.show()
-			#plt.waitforbuttonpress(0.01)
 			plt.close('all')
 
 			test = GtImagePatchesVar[1,0,:,:].data.cpu().numpy()
 			print(test.shape)
 			plt.imshow(np.uint8(test)/np.max(np.uint8(test)),cmap=plt.cm.gray)
 			plt.show()
-			#plt.waitforbuttonpress(0.01)
 			plt.close('all')
 		loss=torch.sum((y_pred-GtImagePatchesVar )**2)/96.0
 		loss.backward()
@@ -198,28 +187,3 @@ while(1):
 		optimizer.step()
 		optimizer.zero_grad()
 	
-
-		#print(torch.max(trainImagePatchesVar.data))
-		#print(y_pred)
-		# Compute and print loss
-		#loss = criterion(y_pred, labels)
-		#print(epoch, i, loss.data[0])
-
-		# Zero gradients, perform a backward pass, and update the weights.
-		#optimizer.zero_grad()
-		#loss.backward()	
-	#optimizer.step()
-
-	#print(inputs.shape)
-	#image = inputs[0,0,:,:].numpy()
-	#print(image)
-	#plt.imshow(image)
-	#plt.show()
-
-	'''
-	test = trainImage[1,:,:,:].numpy()
-	print(test.shape)
-	plt.imshow(np.uint8(test),cmap=plt.cm.brg)
-	plt.show()
-	'''
-
