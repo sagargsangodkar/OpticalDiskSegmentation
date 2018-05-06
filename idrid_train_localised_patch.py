@@ -97,47 +97,32 @@ train_loader = DataLoader(dataset, batch_size=6, shuffle=True, num_workers=2)
 class Net(torch.nn.Module):
     def __init__(self):
         super(Net, self).__init__()
-        self.conv1 = nn.Conv2d(3, 32, kernel_size=3)
-	self.bn1=nn.BatchNorm2d(32)
+        self.conv1 = nn.Conv2d(3, 16, kernel_size=5)
+	self.bn1=nn.BatchNorm2d(16)
 
-	self.pool1=nn.MaxPool2d(2,return_indices=True)
+        self.conv2 = nn.Conv2d(16, 32, kernel_size=5)
+	self.bn2=nn.BatchNorm2d(32)
 
-        self.conv2 = nn.Conv2d(32, 64, kernel_size=3)
-	self.bn2=nn.BatchNorm2d(64)
+        self.conv3 = nn.Conv2d(32, 64, kernel_size=5)
+	self.bn3=nn.BatchNorm2d(64)
 
-	self.pool2=nn.MaxPool2d(2,return_indices=True)
+        self.conv4 = nn.Conv2d(64, 32, kernel_size=5)
+	self.bn4=nn.BatchNorm2d(32)
 
-        self.conv3 = nn.Conv2d(64, 128, kernel_size=3)
-	self.bn3=nn.BatchNorm2d(128)
+        self.conv5 = nn.Conv2d(32, 16, kernel_size=5)
+	self.bn5=nn.BatchNorm2d(16)
 
-
-        self.deconv3 = nn.ConvTranspose2d(128, 64, kernel_size=3)
-	self.bn_d_3=nn.BatchNorm2d(64)
-
-	self.unpool2=nn.MaxUnpool2d(2)
-
-
-        self.deconv2 = nn.ConvTranspose2d(64, 32, kernel_size=3)
-	self.bn_d_2=nn.BatchNorm2d(32)
-
-	self.unpool1=nn.MaxUnpool2d(2)
-
-        self.deconv1 = nn.ConvTranspose2d(32, 1, kernel_size=3)
-	#self.bn_d_1=nn.BatchNorm2d(32)
+        self.conv6 = nn.Conv2d(16, 1, kernel_size=5)
 
 
     def forward(self, x):
         in_size = x.size(0)
-        x,ind_1 = self.pool1(F.relu(self.bn1(self.conv1(x))))
-        x,ind_2 = self.pool2(F.relu(self.bn2(self.conv2(x))))
+        x = F.relu(self.bn1(self.conv1(x)))
+        x = F.relu(self.bn2(self.conv2(x)))
         x = F.relu(self.bn3(self.conv3(x)))
-
-
-        x = self.unpool2(F.relu(self.bn_d_3(self.deconv3(x))),ind_2)
-        x = self.unpool1(F.relu(self.bn_d_2(self.deconv2(x))),ind_1)
-        x = F.relu(self.deconv1(x))
-	#print('Size of conv output :: ',x.shape)
-
+        x = F.relu(self.bn4(self.conv4(x)))
+        x = F.relu(self.bn5(self.conv5(x)))
+        x = F.relu(self.conv6(x))
         return x
 
 model = Net()
